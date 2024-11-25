@@ -20,4 +20,4 @@ This repository houses an intelligent agent designed to automate document genera
 
 1. **Clone the Repository:**
    ```bash
-   git clone [https://github.com/your_username/Email2DocAI.git](https://github.com/your_username/Email2DocAI.git)
+   git clone [https://github.com/Laaliji/AI-API-Powered-EmailToDocumentAssistant.git](https://github.com/Laaliji/AI-API-Powered-EmailToDocumentAssistant.git)
