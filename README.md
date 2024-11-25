@@ -1,5 +1,9 @@
 # AI API Powered Email to Document Assistant
 
+**Collaborators**
+- [Abdessamad Hnioua](https://github.com/hnioua)
+- [Hamza Ouadoud](https://github.com/hamzaODprogramer)
+
 **Overview**
 
 This repository houses an intelligent agent designed to automate document generation from email content. By leveraging advanced natural language processing techniques, this agent can effectively parse incoming emails, extract relevant information, and generate professional documents such as:
