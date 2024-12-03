@@ -1,0 +1,28 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.so
+
+# Flask
+instance/
+.webassets-cache
+
+# React
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.DS_Store
+
+# Environnement
+.env
+.venv
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Divers
+*.log
+.DS_Store
