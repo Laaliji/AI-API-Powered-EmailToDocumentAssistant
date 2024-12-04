@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
 
+
 const initialEmails = [
   {
     id: 1,
@@ -48,6 +49,17 @@ const initialEmails = [
     timestamp: '2 days ago',
     read: true,
     tags: ['Tech', 'Weekly']
+  },
+  {
+    id: 4,
+    sender: 'Newsletter',
+    subject: 'Your Weekly Tech Digest',
+    preview: 'Check out the latest in AI and machine learning...',
+    category: 'Newsletter',
+    isImportant: false,
+    timestamp: '2 days ago',
+    read: true,
+    tags: ['Tech', 'Weekly']
   }
 ]
 
@@ -57,6 +69,7 @@ export default function IntelligentEmailAgent() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filter, setFilter] = useState('All')
   const [sortBy, setSortBy] = useState('timestamp')
+  const [selectedEmail, setSelectedEmail] = useState(null)
 
   useEffect(() => {
     if (darkMode) {
@@ -135,7 +148,7 @@ export default function IntelligentEmailAgent() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-4 space-y-4">
+      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold dark:text-white">Intelligent Inbox</h1>
           <div className="relative flex items-center">
@@ -187,7 +200,7 @@ export default function IntelligentEmailAgent() {
             <CardTitle className="dark:text-white">Smart Actions</CardTitle>
           </CardHeader>
           <CardContent className="flex space-x-2">
-            {['Summarize Inbox', 'Generate To-Do List', 'Schedule Follow-ups'].map(action => (
+            {['Summarize Inbox', 'Generate Internship Certificate', 'Schedule Follow-ups'].map(action => (
               <Button key={action} variant="outline" size="sm" className="dark:border-gray-600 dark:text-white">
                 <Zap className="mr-2 h-4 w-4" /> {action}
               </Button>
@@ -195,64 +208,65 @@ export default function IntelligentEmailAgent() {
           </CardContent>
         </Card>
 
-        <div className="space-y-4">
-          {filteredAndSortedEmails.map((email) => (
-            <Card 
-              key={email.id} 
-              className={`dark:bg-gray-800 ${!email.read ? 'bg-blue-50 dark:bg-blue-900/30' : ''}`}
-            >
-              <CardContent className="flex items-center p-4">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={`https://ui-avatars.com/api/?name=${email.sender}`} />
-                  <AvatarFallback>{email.sender[0]}</AvatarFallback>
-                </Avatar>
-                <div className="ml-4 space-y-1 flex-1">
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm font-medium leading-none dark:text-white">
-                      {email.sender}
-                    </p>
-                    <span className="text-xs text-muted-foreground dark:text-gray-400">
-                      {email.timestamp}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground dark:text-gray-300">
-                    {email.subject}
-                  </p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-400">
-                    {email.preview}
-                  </p>
-                  <div className="flex space-x-2 mt-2">
-                    {email.tags.map(tag => (
-                      <Badge 
-                        key={tag} 
-                        variant="secondary" 
-                        className="dark:bg-gray-700 dark:text-white"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                    {!email.read && (
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="ml-auto"
-                        onClick={() => markAsRead(email.id)}
-                      >
-                        Mark as Read
-                      </Button>
-                    )}
-                  </div>
-                </div>
-                <Badge 
-                  variant={email.isImportant ? "destructive" : "secondary"}
-                  className="dark:bg-gray-700 dark:text-white"
-                >
-                  {email.category}
-                </Badge>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="space-y-4 overflow-y-auto h-[calc(100vh-8rem)]">
+  {filteredAndSortedEmails.map((email) => (
+    <Card 
+      key={email.id} 
+      className={`dark:bg-gray-800 ${!email.read ? 'bg-blue-50 dark:bg-blue-900/30' : ''}`}
+    >
+      <CardContent className="flex items-center p-4">
+        <Avatar className="h-9 w-9">
+          <AvatarImage src={`https://ui-avatars.com/api/?name=${email.sender}`} />
+          <AvatarFallback>{email.sender[0]}</AvatarFallback>
+        </Avatar>
+        <div className="ml-4 space-y-1 flex-1">
+          <div className="flex justify-between items-center">
+            <p className="text-sm font-medium leading-none dark:text-white">
+              {email.sender}
+            </p>
+            <span className="text-xs text-muted-foreground dark:text-gray-400">
+              {email.timestamp}
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground dark:text-gray-300">
+            {email.subject}
+          </p>
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
+            {email.preview}
+          </p>
+          <div className="flex space-x-2 mt-2">
+            {email.tags.map(tag => (
+              <Badge 
+                key={tag} 
+                variant="secondary" 
+                className="dark:bg-gray-700 dark:text-white"
+              >
+                {tag}
+              </Badge>
+            ))}
+            {!email.read && (
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="ml-auto"
+                onClick={() => markAsRead(email.id)}
+              >
+                Mark as Read
+              </Button>
+            )}
+          </div>
         </div>
+        <Badge 
+          variant={email.isImportant ? "destructive" : "secondary"}
+          className="dark:bg-gray-700 dark:text-white"
+        >
+          {email.category}
+        </Badge>
+      </CardContent>
+    </Card>
+  ))}
+</div>
+
       </div>
     </div>
   )
