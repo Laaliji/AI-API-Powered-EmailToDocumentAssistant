@@ -1,31 +1,24 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from gemini_service import generate_attestation
-from email_parser import extract_student_info
+from flask import Flask , jsonify
+from agents import Agents
+from tasks import Tasks
+from gmail_service import fetch_Mails
+from crewai import Crew
+from emails_filter_gemin import filter_emails_with_gemini
+import json
 
 app = Flask(__name__)
-CORS(app)
 
-@app.route('/generate-attestation', methods=['POST'])
-def generate_attestation_endpoint():
-    email_content = request.json.get('email', '')
-    
-    try:
-        # Extract student information
-        student_info = extract_student_info(email_content)
-        
-        # Generate attestation using Gemini
-        attestation = generate_attestation(student_info)
-        
-        return jsonify({
-            'success': True,
-            'attestation': attestation
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 400
+@app.route('/all_emails',methods=['get'])
+def getAllEmails() : 
+    ret = filter_emails_with_gemini()
 
-if __name__ == '__main__':
+    if ret is None:
+        return jsonify({"error": "No email data found"}), 400
+
+    responseNonComplet = ret.replace("```json", "").replace("```", "").replace("\n", "").strip()
+    response = json.loads(responseNonComplet)
+
+    return jsonify({"data": response})
+
+if __name__ == '__main__' : 
     app.run(debug=True)
