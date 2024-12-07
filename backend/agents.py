@@ -11,5 +11,5 @@ class Agents() :
                 Vous analysez les courriels pour identifier le type de document requis (par exemple, l'attestation scolaire), validez la demande par rapport à la base de données,
                 et générez une réponse personnalisée avec le document demandé si les informations sont correctes.'''),
             verbose=True,
-            allow_delegation=False
+            allow_delegation=False,
         )

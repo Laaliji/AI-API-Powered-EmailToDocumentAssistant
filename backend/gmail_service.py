@@ -5,6 +5,10 @@ from langchain_community.tools.gmail.utils import (
     get_gmail_credentials
 )
 import os
+import google.generativeai as genai
+
+genai.configure(api_key='AIzaSyDBXGiC9zVgX7GX-i6nMttR98LzP47l9DE')
+
 
 credentials = get_gmail_credentials(
     token_file='token.json',
@@ -28,6 +32,7 @@ for email in emails :
         "snippet"   : email["snippet"],
         "sender"    : email["sender"]
     })
+print(mails)
 
 def fetch_Mails() : 
     return mails
