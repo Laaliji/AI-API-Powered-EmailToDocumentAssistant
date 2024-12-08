@@ -14,6 +14,8 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
+import { api_url } from '../constant/global'
+import useAxios from '../hooks/useAxios'
 
 
 const initialEmails = [
@@ -77,7 +79,17 @@ export default function IntelligentEmailAgent() {
     } else {
       document.documentElement.classList.remove('dark')
     }
+    getEmails()
   }, [darkMode])
+
+  const getEmails = async () => {
+    try {
+      const response = await useAxios().get('all_emails')
+      setEmails(response.data.data.valid_student_requests)
+    } catch (error) {
+      console.log("error : ",error)
+    }
+  }
 
   const filteredAndSortedEmails = useMemo(() => {
     return emails
@@ -106,6 +118,8 @@ export default function IntelligentEmailAgent() {
       email.id === id ? { ...email, read: true } : email
     ))
   }
+
+
 
   return (
     <div className="flex h-screen bg-gray-100 w-screen dark:bg-gray-900">

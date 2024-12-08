@@ -23,6 +23,9 @@ def filter_emails_with_gemini():
     - additional_context
     - processing_status
 
+
+    les document possible est (attestation scolaire,relevé de note,attestation de reussit,etc...)
+
     If information is missing, use null.
 
     Example JSON structure:
