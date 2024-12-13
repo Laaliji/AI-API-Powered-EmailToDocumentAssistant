@@ -8,7 +8,7 @@ from emails_filter_gemin import filter_emails_with_gemini
 import json
 
 app = Flask(__name__)
-CORS(app,resources={"*":{"origins":"*"}})
+CORS(app,origins="*")
 
 @app.route('/all_emails',methods=['get'])
 def getAllEmails() : 
@@ -21,6 +21,10 @@ def getAllEmails() :
     response = json.loads(responseNonComplet)
 
     return jsonify({"data": response})
+
+@app.route('/getEmailsFromInbox',methods=['get'])
+def getEmailsFromInbox() :
+    return jsonify(fetch_Mails())
 
 if __name__ == '__main__' : 
     app.run(debug=True)
