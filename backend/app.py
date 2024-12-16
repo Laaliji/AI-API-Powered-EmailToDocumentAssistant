@@ -26,5 +26,9 @@ def getAllEmails() :
 def getEmailsFromInbox() :
     return jsonify(fetch_Mails())
 
+@app.route('/reply',methods=['get'])
+def Reply() : 
+    pass
+
 if __name__ == '__main__' : 
     app.run(debug=True)
