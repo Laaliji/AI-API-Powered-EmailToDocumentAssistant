@@ -1,5 +1,3 @@
-# email_processor.py
-
 from langchain_community.agent_toolkits import GmailToolkit
 from langchain_community.tools.gmail.search import GmailSearch
 from langchain_community.tools.gmail.utils import build_resource_service, get_gmail_credentials
@@ -150,6 +148,63 @@ def fetch_and_filter_emails():
         logging.error(f"Error in fetch_and_filter_emails: {e}")
         return []
 
+def create_missing_info_email(sender, student_info, missing_fields):
+    """
+    Create and send an email requesting missing information.
+    """
+    message = MIMEMultipart()
+    message['to'] = sender
+    message['subject'] = "Information complémentaire requise / Additional Information Required"
+
+    # Create a list of missing fields in both languages
+    field_translations = {
+        "name": "nom complet / full name",
+        "institution": "établissement ou école / institution or school",
+        "birth_date": "date de naissance / birth date"
+    }
+    
+    missing_fields_text = "\n".join(f"- {field_translations[field]}" for field in missing_fields)
+
+    body = f"""
+    Bonjour,
+
+    Nous avons bien reçu votre demande d'attestation. Cependant, il nous manque certaines informations pour générer votre document. Merci de nous fournir les informations suivantes:
+
+    {missing_fields_text}
+
+    Veuillez répondre à cet email en incluant les informations manquantes.
+
+    Cordialement,
+    Service de Scolarité
+
+    -------------------
+
+    Hello,
+
+    We have received your certificate request. However, we are missing some information needed to generate your document. Please provide the following information:
+
+    {missing_fields_text}
+
+    Please reply to this email with the missing information.
+
+    Best regards,
+    Student Services
+    """
+
+    message.attach(MIMEText(body, 'plain'))
+    raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode('utf-8')
+    
+    try:
+        api_resource.users().messages().send(
+            userId="me",
+            body={'raw': raw_message}
+        ).execute()
+        logging.info(f"Missing information request sent to {sender}")
+        return True
+    except Exception as e:
+        logging.error(f"Error sending missing information request: {e}")
+        return False
+
 def send_certificate_email(recipient_email, student_info, certificate_path):
     """
     Send the generated certificate to the student via email.
@@ -227,8 +282,28 @@ def process_emails():
                 email_text = clean_text(email['subject'] + "\n" + email['body'])
                 student_info = analyze_with_gemini(email_text)
                 
-                if not student_info or not student_info.get("name") or not student_info.get("institution"):
-                    logging.warning(f"Incomplete information for email {email['id']}: {student_info}")
+                # Check for missing required fields
+                missing_fields = []
+                if not student_info:
+                    missing_fields = ["name", "institution", "birth_date"]
+                else:
+                    if not student_info.get("name"):
+                        missing_fields.append("name")
+                    if not student_info.get("institution"):
+                        missing_fields.append("institution")
+                    if not student_info.get("birth_date"):
+                        missing_fields.append("birth_date")
+                
+                if missing_fields:
+                    logging.warning(f"Missing information for email {email['id']}: {missing_fields}")
+                    if create_missing_info_email(email['sender'], student_info, missing_fields):
+                        # Mark as processed with a special label for follow-up
+                        api_resource.users().messages().modify(
+                            userId="me",
+                            id=email['id'],
+                            body={'addLabelIds': ['Waiting_For_Info']}
+                        ).execute()
+                        logging.info(f"Email marked as waiting for info: {email['id']}")
                     continue
                 
                 try:
