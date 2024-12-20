@@ -1,7 +1,13 @@
 import google.generativeai as genai
+import os
+from dotenv import load_dotenv 
+
+
 
 # Configure Gemini API
-genai.configure(api_key='YOUR_GEMINI_API_KEY')
+load_dotenv()
+api_key = os.getenv("GENAI_API_KEY")
+genai.configure(api_key=api_key)
 
 def generate_attestation(student_info):
     model = genai.GenerativeModel('gemini-pro')

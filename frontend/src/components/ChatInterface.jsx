@@ -34,17 +34,18 @@ export default function IntelligentEmailAgent() {
   const [empty, setEmpty] = useState(false);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    fetchEmails();
+    // Set dark mode class
+    document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
+
+  useEffect(() => {
+    // Fetch emails on component mount
+    fetchEmails();
+  }, []); // Only run once when component mounts
 
   const fetchEmails = async () => {
     setIsLoading(true);
-    console.log("Fetching emails..."); // Debug log
+    console.log("Fetching emails...");
 
     const { response, error } = await useAxios({
       url: "all_emails",
@@ -59,13 +60,12 @@ export default function IntelligentEmailAgent() {
       return;
     }
 
-    // Log the entire response
     console.log("API Response:", response);
 
     if (response && typeof response === "string") {
       try {
         const data = JSON.parse(response);
-        console.log("Parsed data:", data); // Debug log
+        console.log("Parsed data:", data);
         if (data.emails) {
           setEmails(data.emails);
         } else {
@@ -212,7 +212,7 @@ export default function IntelligentEmailAgent() {
             filterEmails.map((email, idx) => (
               <Card
                 key={idx}
-                className={`dark:bg-gray-800 shadow-md border-solid border-black/5 py-2 n border-[2px] ${
+                className={`dark:bg-gray-800 shadow-md border-solid border-black/5 py-2 ${
                   !email.read ? "bg-blue-50 dark:bg-blue-900/30" : ""
                 }`}
               >
